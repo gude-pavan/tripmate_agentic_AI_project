@@ -5,19 +5,44 @@ function setPrompt(text) {
     document.getElementById("userInput").value = text;
 }
 
+let loadingInterval = null;
+const loadingMessages = [
+    "✈️ Flight Agent: Checking routes & airline guidance...",
+    "🏨 Hotel Agent: Searching top-rated hotels via Tavily MCP...",
+    "⛅ Weather Agent: Fetching live weather & forecasts...",
+    "🗺️ Itinerary Agent: Structuring day-by-day travel plan...",
+    "✨ Final Agent: Synthesizing recommendations & budget..."
+];
+
 function setLoading(isLoading) {
     const sendBtn = document.getElementById("sendBtn");
     const btnText = document.getElementById("btnText");
     const btnLoader = document.getElementById("btnLoader");
+    const statusBox = document.getElementById("loadingStatusBox");
+    const statusText = document.getElementById("loadingStatusText");
 
     sendBtn.disabled = isLoading;
 
     if (isLoading) {
         btnText.classList.add("hidden");
         btnLoader.classList.remove("hidden");
+        if (statusBox && statusText) {
+            statusBox.classList.remove("hidden");
+            let idx = 0;
+            statusText.textContent = loadingMessages[0];
+            clearInterval(loadingInterval);
+            loadingInterval = setInterval(() => {
+                idx = (idx + 1) % loadingMessages.length;
+                statusText.textContent = loadingMessages[idx];
+            }, 3500);
+        }
     } else {
         btnText.classList.remove("hidden");
         btnLoader.classList.add("hidden");
+        clearInterval(loadingInterval);
+        if (statusBox) {
+            statusBox.classList.add("hidden");
+        }
     }
 }
 
